@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+.btn {
+  border: 2px;
+  background-color: inherit;
+  padding: 14px 28px;
+  font-size: 16px;
+  cursor: pointer;
+  display: inline-block;
+}
+
+/* Green */
+.numbers {
+  color: green;
+}
+
+.numbers:hover {
+  background-color: #04AA6D;
+  color: white;
+}
+
+/* End of Numbers  */
+/* Green */
+.success {
+  color: green;
+}
+
+.success:hover {
+  background-color: #04AA6D;
+  color: white;
+}
+
+/* Blue */
+.info {
+  color: dodgerblue;
+}
+
+.info:hover {
+  background: #2196F3;
+  color: white;
+}
+
+/* Orange */
+.warning {
+  color: orange;
+}
+
+.warning:hover {
+  background: #ff9800;
+  color: white;
+}
+
+/* Red */
+.danger {
+  color: red;
+}
+
+.danger:hover {
+  background: #f44336;
+  color: white;
+}
+
+/* Gray */
+.default {
+  color: black;
+}
+
+.default:hover {
+  background: #e7e7e7;
+}
+
+</style>
+</head>
+<body bgcolor="e7e7e7">
+
+<h1>Calculator</h1>
+<p>Please select the numbers for calculation</p>
+
+<table style="width:5%">
+
+    <tr>
+        <td><button class="btn numbers">7</button></td>
+        <td><button class="btn numbers">8</button></td>
+        <td><button class="btn numbers">9</button></td>
+        <td><button class="btn danger">/</button></td>        
+    </tr>
+
+    <tr>
+        <td><button class="btn numbers">4</button></td>
+        <td><button class="btn numbers">5</button></td>
+        <td><button class="btn numbers">6</button></td>
+        <td><button class="btn warning">*</button> </td>
+    </tr>
+
+    <tr>
+        <td><button class="btn numbers">1</button></td>
+        <td><button class="btn numbers">2</button></td>
+        <td><button class="btn numbers">3</button></td>
+        <td><button class="btn info">-</button> </td>
+    </tr>
+
+    <tr>
+        <td><button class="btn numbers" id="reset">CE</button></td>
+        <td><button class="btn numbers">0</button></td>
+        <td><button class="btn numbers">.</button></td>
+        <td><button class="btn success">+</button></td>
+    </tr>
+
+    <tr>
+      <input type="text" id="result" value="0">
+      <button onclick="calculatefunc()" class="btn success" id="equals">=</button>      
+    </tr>
+</table>
+
+<table>
+  <td><button style="align-items:right" id="clearhistory" class="btn success">Clear History</button></td> 
+     
+</table>
+
+
+<ul id="history">
+</ul>
+
+<script>
+
+    let historyName = "";
+    let historyArray=[];
+   
+      var x = 0;
+      var y = 0;  
+      var op = null;
+
+function ready() {
+  
+  // The textfield element
+  textField = document.getElementById("result")
+  // The reset button
+  resetButton = document.getElementById("reset")
+  // Get all the buttons to an Array
+  buttons = document.getElementsByClassName("btn")
+    // The clear history button
+  clearhistory = document.getElementById("clearhistory")  
+      // The equals button
+  calculate = document.getElementById("equals")
+  
+  // Add click event listener to all button elements and insert their inner text as value to the text field
+  Array.prototype.forEach.call (buttons, (button) => {
+    button.addEventListener("click", () => {
+     // alert("text field with ---> " + textField.value.length)
+      let n = button.innerText    
+      
+        switch (true)
+        {                        
+        case (!isNaN(n) && (!textField.value.includes('.')) && (parseInt(textField.value)===0 || textField.value==='')):
+              textField.value= n 
+              break;    
+        case (!isNaN(n) && (textField.value.includes('.'))):              
+              textField.value+= n 
+              break; 
+        case (n.includes('.') && (textField.value.split('.').length===1)):              
+              textField.value+= n 
+              break; 
+       case ((!isNaN(n))  && (parseInt(textField.value)>0)):              
+              textField.value+= n 
+              break;
+
+        case (n.includes('+')):              
+              x=textField.value              
+              op = "+"
+              textField.value = '';
+              break; 
+        case (n.includes('-')):              
+              x=textField.value
+              op = "-"
+              textField.value = '';
+              break; 
+        case (n.includes('*')):              
+              x=textField.value
+              op = "*"
+              textField.value = '';
+              break; 
+        case (n.includes('/')):              
+              x=textField.value
+              op = "/"
+              textField.value = '';
+              break; 
+        }
+    })
+  })
+
+  // Add click event listener to reset button
+  resetButton.addEventListener("click", () => {
+    textField.value = 0
+  })
+
+   // Clear the history
+  clearhistory.addEventListener("click", () => {
+    const history = document.getElementById("history");
+
+       //clear the list
+       history.innerHTML='';
+  })
+}
+
+// Function that evaluates the digit and return result
+function calculatefunc() {
+    y = textField.value
+    var output=0;
+  
+  switch (op){
+
+    case "+":
+      output = parseInt(x) + parseInt(y)     
+      textField.value = output
+      writehistory("Addition Operation Performed --> " + x + " + " + y + " = " + output)
+      op=null;
+      textField.value = '';
+      break;
+    case "-":
+    output = parseInt(x) - parseInt(y)
+      textField.value = output
+      writehistory("Subtraction Operation Performed --> " + x + " - " + y + " = " + output)
+      op=null;
+      textField.value = '';
+      break;
+    case "*":
+    output = parseInt(x) * parseInt(y)
+      textField.value = output
+      writehistory("Multiply Operation Performed --> " + x + " * " + y + " = " + output)
+      op=null;
+      textField.value = '';
+      break;
+    case "/":
+    output = parseInt(x) / parseInt(y)
+      textField.value = output
+      writehistory("Divide Operation Performed --> " + x + " / " + y + " = " + output)
+      op=null;
+      textField.value = '';
+      break;
+  }
+}
+
+//Function to write the history based on the calculation performed
+function writehistory(text){
+  const history1 = document.getElementById("history");
+
+  const historyitem = {id:Math.random(), name:text};
+       // historyArray.push (historyitem);
+
+
+        const li = document.createElement("li");
+        li.innerText = historyitem.name;
+        li.id = historyitem.id;
+        history1.appendChild(li);
+}
+
+
+document.addEventListener("DOMContentLoaded", ready);
+
+</script>
+
+
+</body>
+</html>
